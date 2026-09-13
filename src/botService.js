@@ -1,5 +1,4 @@
 const bot = require("../config/connectionBot");
-// Hapus getTotalUsers karena kita tidak pakai fitur member count lagi
 const { saveUser } = require("../config/connectionDataBase"); 
 const { scanMarket, getTrendingCoins } = require("./marketScanner");
 
@@ -18,14 +17,10 @@ const runBotService = () => {
   bot.on("message", async (msg) => {
     const chatId = msg.chat.id;
     const Text = msg.text;
-    
-    // --- 1. PERBAIKAN LOGIKA USER (ANTI CRASH) ---
-    const rawUser = msg.from || {}; // Ambil object user utuh
-    const username = rawUser.username || ''; // Kalau gak ada username, kasih kosong
-    // Kalau gak ada nama, panggil 'Trader'
+    const rawUser = msg.from || {}; 
+    const username = rawUser.username || ''; 
     const firstName = rawUser.first_name || 'Trader'; 
 
-    // Simpan data yang benar ke database
     saveUser(chatId, username, firstName);
 
     console.log("Message received from ", firstName, ": ", Text);
@@ -84,7 +79,6 @@ const runBotService = () => {
         });
 
         message += `\n💰 *TOP VOLUME (Whales)*\n`;
-        // Pastikan data.topVol ada isinya (ditangani di marketScanner)
         if(data.topVol) {
             data.topVol.forEach((c, i) => {
               const symbol = c.symbol.replace("USDT", "");
@@ -137,7 +131,7 @@ const runBotService = () => {
         disable_web_page_preview: true 
       });
     } else {
-    //   bot.sendMessage(chatId, `You said: ${Text}`); // Opsional: Matikan biar gak berisik kalau user iseng
+    //   bot.sendMessage(chatId, `You said: ${Text}`);
     }
   });
 };
